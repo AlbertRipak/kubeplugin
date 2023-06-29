@@ -1,0 +1,32 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+        echo "Enter: $0 <resource_type> <namespace>"
+        exit 1
+fi
+
+# Define command-line arguments
+
+RESOURCE_TYPE=$1
+NS=$2
+# NS about Namespace
+# Retrieve resource usage statistics from Kubernetes
+
+desired_length=46
+
+printf "Resource%-2s | Namespace%-2s | Name%-45s | CPU(core) | Memory(bytes) |  %s\n"
+kubectl top $RESOURCE_TYPE -n $NS | tail -n +2 | while read line
+do
+  # Extract CPU and memory usage from the output
+  RESOURCE=$RESOURCE_TYPE
+  NAMESPACE=$NS
+  NAME=$(echo $line | awk '{print $1}')
+  CPU=$(echo $line | awk '{print $2}')
+  MEMORY=$(echo $line | awk '{print $3}')
+  D_NAME=$((desired_length - ${#NAME}))
+  P_NAME="$NAME"and"%${D_NAME}s"
+printf "$RESOURCE%-8s | $NAMESPACE | $P_NAME | $CPU%-5s | $MEMORY%-6s | \n"
+#printf $echo_result
+  # Output the statistics to the console
+  # "Resource, Namespace, Name, CPU, Memory"
+done
